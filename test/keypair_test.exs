@@ -8,7 +8,8 @@ defmodule Nkeys.KeypairTest do
 
       {:ok, decoded} = Nkeys.Keypair.decode(public)
       IO.inspect(decoded)
-      encoded = Nkeys.Keypair.encode(0, decoded) # 0 is the account prefix
+      # 0 is the account prefix
+      encoded = Nkeys.Keypair.encode(0, decoded)
       IO.puts(encoded)
       assert encoded == public
 
@@ -22,7 +23,9 @@ defmodule Nkeys.KeypairTest do
   describe "from_seed/1" do
     test "creates a struct from a valid seed" do
       assert {:ok, nkey} =
-               Nkeys.Keypair.from_seed("SUAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU")
+               Nkeys.Keypair.from_seed(
+                 "SUAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU"
+               )
 
       assert nkey.private_key != nil
       assert nkey.public_key != nil
@@ -30,12 +33,16 @@ defmodule Nkeys.KeypairTest do
 
     test "should raise error when seed has bad padding" do
       assert {:error, :invalid_seed} =
-               Nkeys.Keypair.from_seed("UAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU")
+               Nkeys.Keypair.from_seed(
+                 "UAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU"
+               )
     end
 
     test "should raise error with invalid seeds" do
       assert {:error, :invalid_seed} =
-               Nkeys.Keypair.from_seed("AUAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU")
+               Nkeys.Keypair.from_seed(
+                 "AUAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU"
+               )
 
       assert {:error, :invalid_seed} = Nkeys.Keypair.from_seed("")
 
@@ -100,6 +107,8 @@ defmodule Nkeys.KeypairTest do
 
   test "creating a public nkey" do
     {:ok, nkeys} = Nkeys.Keypair.from_seed(@seed)
-    assert Nkeys.Keypair.public_key(nkeys) == "UCK5N7N66OBOINFXAYC2ACJQYFSOD4VYNU6APEJTAVFZB2SVHLKGEW7L"
+
+    assert Nkeys.Keypair.public_key(nkeys) ==
+             "UCK5N7N66OBOINFXAYC2ACJQYFSOD4VYNU6APEJTAVFZB2SVHLKGEW7L"
   end
 end

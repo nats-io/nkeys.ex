@@ -127,20 +127,38 @@ defmodule Nkeys.Keypair do
     Base.encode32(new, padding: false)
   end
 
-  def decode_seed(input) when is_binary(input) do
-    input = :binary.bin_to_list(input) |> Enum.drop(1) |> :binary.list_to_bin()
-    with {:ok, raw} <- decode(input) do
-      b1 = Enum.at(0, raw) &&& 248
-      b2 = Enum.at(0, raw) &&& 7 ||| (Enum.at(raw, 1) &&& 248) >>> 3
+  # def decode_seed(input) when is_binary(input) do
+  #   #input = :binary.bin_to_list(input) |> Enum.drop(1) |> :binary.list_to_bin()
+  #   with {:ok, raw} <- decode(input) do
+  #     b1 = Enum.at(0, raw) &&& 248
+  #     b2 = Enum.at(0, raw) &&& 7 ||| (Enum.at(raw, 1) &&& 248) >>> 3
 
-      # TODO - validate b1 and b2
-      {:ok, Enum.drop(input, -2)}
-      #
-  #    b1 := raw[0] & 248                          // 248 = 11111000
-	#b2 := (raw[0]&7)<<5 | ((raw[1] & 248) >> 3) // 7 = 00000111
-      #
-    end
-  end
+  #     # TODO - validate b1 and b2
+  #     {:ok, Enum.drop(raw, -2)}
+  #     #
+  # #    b1 := raw[0] & 248                          // 248 = 11111000
+  # #b2 := (raw[0]&7)<<5 | ((raw[1] & 248) >> 3) // 7 = 00000111
+  #     #
+  #   end
+  # end
+
+  # def decode_seed(input) when is_binary(input) do
+  #   with {:ok, raw} <- Base.decode32(input, padding: false),
+  #        n <- byte_size(raw) do
+  #     <<_seed::binary-size(1), prefix::binary-size(1), in_stripped::binary-size(n-4), crc::little-16>> = raw
+
+  #     {:ok, in_stripped}
+
+  #   #   if Nkeys.CRC.compute(raw) != crc do
+  #   #     {:error, :bad_crc}
+  #   #   else
+  #   #     {:ok, in_stripped}
+  #   #   end
+  #   else
+  #     _ -> {:error, :decoding_failure}
+  #   end
+  # end
+
   def decode(input) when is_binary(input) do
     with {:ok, raw} <- Base.decode32(input, padding: false),
          n <- byte_size(raw) do

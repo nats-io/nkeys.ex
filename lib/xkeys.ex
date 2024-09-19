@@ -18,21 +18,24 @@ defmodule Nkeys.Xkeys do
   #   unboxed
   # end
 
-
-  defp seal(input, decoded_target_pk, decoded_our_sk) do
+  def seal(input, decoded_target_pk, decoded_our_sk) do
     # Generate a random 24-byte nonce
     nonce = :crypto.strong_rand_bytes(@nonce_size)
+    IO.inspect(nonce)
 
     # Perform authenticated encryption using the KCL box_seal function
-    {sealed, _} =  Kcl.box(input, nonce, decoded_our_sk, decoded_target_pk)
+    {sealed, _} = Kcl.box(input, nonce, decoded_our_sk, decoded_target_pk)
 
     @xkeyversion1 <> nonce <> sealed
-
   end
 
-  defp open(input, decoded_our_sk, decoded_sender_pk) do
-    <<_version::size(4), nonce::size(@nonce_size), message::binary>> = input
+  def open(input, decoded_our_sk, decoded_sender_pk) do
+    n = byte_size(input)
+    IO.puts(n)
+    # message = :binary.bin_to_list(input) |> Enum.take(n-4-@nonce_size) |> :binary.list_to_bin()
+    <<_version::binary-size(4), nonce::binary-size(@nonce_size), message::binary>> = input
+    IO.inspect(nonce)
 
-    Kcl.unbox()
+    Kcl.unbox(message, nonce, decoded_our_sk, decoded_sender_pk)
   end
 end
