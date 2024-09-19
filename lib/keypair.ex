@@ -104,6 +104,17 @@ defmodule Nkeys.Keypair do
     end
   end
 
+  def from_public(public_key) when is_binary(public_key) do
+    case decode(public_key) do
+      {:ok, decoded, prefix} ->
+        %__MODULE__{
+          public_key: decoded,
+          prefix: prefix,
+        }
+      _ -> :error
+    end
+  end
+
   def sign(%__MODULE__{public_key: public, private_key: private}, message)
       when is_binary(message) do
     Ed25519.signature(message, private, public)
@@ -162,12 +173,12 @@ defmodule Nkeys.Keypair do
   def decode(input) when is_binary(input) do
     with {:ok, raw} <- Base.decode32(input, padding: false),
          n <- byte_size(raw) do
-      <<_prefix::binary-size(1), in_stripped::binary-size(n - 3), crc::little-16>> = raw
+      <<prefix::binary-size(1), in_stripped::binary-size(n - 3), crc::little-16>> = raw
 
       if Nkeys.CRC.compute(in_stripped) != crc do
         {:error, :bad_crc}
       else
-        {:ok, in_stripped}
+        {:ok, in_stripped, prefix}
       end
     else
       _ -> {:error, :decoding_failure}

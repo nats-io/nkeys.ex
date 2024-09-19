@@ -6,7 +6,7 @@ defmodule Nkeys.KeypairTest do
       seed = "SAAOEFWEJFOR67CV7CLVKGEDVFOPU4EHDY4BZTCCCK3UFVISYBNOQLB4QQ"
       public = "AACKDD7DWAJM2K76WMDHTHTIN2WZLKA7MGSLNHIHSZ3ZRSEBZG6GWECF"
 
-      {:ok, decoded} = Nkeys.Keypair.decode(public)
+      {:ok, decoded, _} = Nkeys.Keypair.decode(public)
       IO.inspect(decoded)
       # 0 is the account prefix
       encoded = Nkeys.Keypair.encode(0, decoded)
