@@ -1,6 +1,24 @@
 defmodule Nkeys.KeypairTest do
   use ExUnit.Case
 
+  describe "decode/1" do
+    test "properly decodes a key used by golang tests" do
+      seed = "SAAOEFWEJFOR67CV7CLVKGEDVFOPU4EHDY4BZTCCCK3UFVISYBNOQLB4QQ"
+      public = "AACKDD7DWAJM2K76WMDHTHTIN2WZLKA7MGSLNHIHSZ3ZRSEBZG6GWECF"
+
+      {:ok, decoded} = Nkeys.Keypair.decode(public)
+      IO.inspect(decoded)
+      encoded = Nkeys.Keypair.encode(0, decoded) # 0 is the account prefix
+      IO.puts(encoded)
+      assert encoded == public
+
+      # TODO
+      # {:ok, decoded_seed} = Nkeys.Keypair.decode_seed(seed)
+      # encoded_seed = Nkeys.Keypair.encode_seed(0, decoded_seed)
+      # IO.puts(encoded_seed)
+    end
+  end
+
   describe "from_seed/1" do
     test "creates a struct from a valid seed" do
       assert {:ok, nkey} =

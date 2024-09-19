@@ -1,4 +1,5 @@
 defmodule Nkeys.Keypair do
+  import Bitwise
 
   defstruct [:seed, :public_key, :private_key, :prefix]
 
@@ -31,8 +32,7 @@ defmodule Nkeys.Keypair do
 
   # PREFIX_BYTECURVE is the version byte used for encoded CurveKeys (X25519)
   # Base32-encodes to 'X...'
-	@prefix_xcurve  23
-
+  @prefix_xcurve 23
 
   @valid_nkey_types [
     @prefix_account,
@@ -73,7 +73,7 @@ defmodule Nkeys.Keypair do
     %__MODULE__{
       public_key: public,
       private_key: private,
-      seed: "",
+      seed: ""
     }
   end
 
@@ -109,9 +109,55 @@ defmodule Nkeys.Keypair do
     Ed25519.signature(message, private, public)
   end
 
+  def encode(prefix, src) do
+    raw = [prefix | src] |> :binary.list_to_bin()
+    crc = Nkeys.CRC.compute(raw)
+    new = raw <> <<crc::little-16>>
+    IO.inspect(new)
+    Base.encode32(new, padding: false)
+  end
+
+  def encode_seed(prefix, src) do
+    b1 = @prefix_seed ||| prefix >>> 5
+    b2 = (prefix &&& 31) <<< 3
+
+    raw = [b1, b2 | src] |> :binary.list_to_bin()
+    crc = Nkeys.CRC.compute(raw)
+    new = raw <> <<crc::little-16>>
+    Base.encode32(new, padding: false)
+  end
+
+  def decode_seed(input) when is_binary(input) do
+    input = :binary.bin_to_list(input) |> Enum.drop(1) |> :binary.list_to_bin()
+    with {:ok, raw} <- decode(input) do
+      b1 = Enum.at(0, raw) &&& 248
+      b2 = Enum.at(0, raw) &&& 7 ||| (Enum.at(raw, 1) &&& 248) >>> 3
+
+      # TODO - validate b1 and b2
+      {:ok, Enum.drop(input, -2)}
+      #
+  #    b1 := raw[0] & 248                          // 248 = 11111000
+	#b2 := (raw[0]&7)<<5 | ((raw[1] & 248) >> 3) // 7 = 00000111
+      #
+    end
+  end
+  def decode(input) when is_binary(input) do
+    with {:ok, raw} <- Base.decode32(input, padding: false),
+         n <- byte_size(raw) do
+      <<_prefix::binary-size(1), in_stripped::binary-size(n - 3), crc::little-16>> = raw
+
+      if Nkeys.CRC.compute(in_stripped) != crc do
+        {:error, :bad_crc}
+      else
+        {:ok, in_stripped}
+      end
+    else
+      _ -> {:error, :decoding_failure}
+    end
+  end
+
   defp valid_seed_prefix?(prefix1, prefix2) do
     prefix1 == @prefix_seed &&
       prefix2 in @valid_nkey_types
   end
-
 end
