@@ -9,10 +9,7 @@ defmodule Nkeys.XkeysTest do
       bob = Nkeys.Keypair.new_user()
 
       sealed_data = Nkeys.Xkeys.seal(input, bob.public_key, alice.private_key)
-      IO.inspect(sealed_data)
-      # {unsealed_data, _} = Nkeys.Xkeys.open(sealed_data, target_kp.private_key, kp.public_key)
-
-      {unsealed_data, _} = Nkeys.Xkeys.open(sealed_data, alice.private_key, bob.public_key)
+      {:ok, unsealed_data} = Nkeys.Xkeys.open(sealed_data, alice.private_key, bob.public_key)
 
       assert "this is top secret" == unsealed_data
     end

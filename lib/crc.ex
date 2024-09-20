@@ -1,9 +1,6 @@
 defmodule Nkeys.CRC do
-  @moduledoc """
-  Calculates a CRC16 checksum (CCITT - XMODEM)
+  @moduledoc false
 
-  This is based on the [go nkeys](https://github.com/nats-io/nkeys/blob/ca6c74a24daca36cbe07d7389d7b2619d0fbc177/crc16.go) package implementation
-  """
   import Bitwise,
     only: [
       bxor: 2,

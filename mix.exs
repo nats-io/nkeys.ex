@@ -1,19 +1,23 @@
 defmodule Nkeys.MixProject do
+  @version "0.3.0"
+  @source_url "https://github.com/nats-io/nkeys.ex"
+
   use Mix.Project
 
   def project do
     [
       app: :nkeys,
-      version: "0.3.0",
+      version: @version,
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      docs: docs(),
       description: "Support for nkey generation, parsing, and signing",
       package: [
         name: "nkeys",
-        licenses: ["Apache-2"],
+        licenses: ["MIT"],
         links: %{
-          "github" => "https://github.com/nats-io/nkeys.ex"
+          "github" => @source_url
         }
       ]
     ]
@@ -23,6 +27,18 @@ defmodule Nkeys.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      logo: "nats-icon-color.svg",
+      source_ref: "v#{@version}",
+      source_url: @source_url,
+      extras: [
+        "README.md"
+      ],
     ]
   end
 
