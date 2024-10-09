@@ -1,4 +1,4 @@
-defmodule Nkeys.CRC do
+defmodule NKEYS.CRC do
   @moduledoc false
 
   import Bitwise,
