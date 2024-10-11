@@ -1,4 +1,4 @@
-defmodule Nkeys.Xkeys do
+defmodule NKEYS.Xkeys do
   @moduledoc """
   Contains functions for using curve (X) keys for sending and receiving encrypted
   messages

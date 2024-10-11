@@ -1,14 +1,13 @@
-defmodule Nkeys.KeypairTest do
+defmodule NKEYS.KeypairTest do
   use ExUnit.Case
 
   describe "decode/1" do
     test "properly decodes a key used by golang tests" do
-      seed = "SAAOEFWEJFOR67CV7CLVKGEDVFOPU4EHDY4BZTCCCK3UFVISYBNOQLB4QQ"
       public = "AACKDD7DWAJM2K76WMDHTHTIN2WZLKA7MGSLNHIHSZ3ZRSEBZG6GWECF"
 
-      {:ok, decoded, _} = Nkeys.Keypair.decode(public)
+      {:ok, decoded, _} = NKEYS.Keypair.decode(public)
       # 0 is the account prefix
-      encoded = Nkeys.Keypair.encode(0, decoded)
+      encoded = NKEYS.Keypair.encode(0, decoded)
       assert encoded == public
     end
   end
@@ -16,7 +15,7 @@ defmodule Nkeys.KeypairTest do
   describe "from_seed/1" do
     test "creates a struct from a valid seed" do
       assert {:ok, nkey} =
-               Nkeys.Keypair.from_seed(
+               NKEYS.Keypair.from_seed(
                  "SUAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU"
                )
 
@@ -26,20 +25,20 @@ defmodule Nkeys.KeypairTest do
 
     test "should raise error when seed has bad padding" do
       assert {:error, :invalid_seed} =
-               Nkeys.Keypair.from_seed(
+               NKEYS.Keypair.from_seed(
                  "UAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU"
                )
     end
 
     test "should raise error with invalid seeds" do
       assert {:error, :invalid_seed} =
-               Nkeys.Keypair.from_seed(
+               NKEYS.Keypair.from_seed(
                  "AUAMLK2ZNL35WSMW37E7UD4VZ7ELPKW7DHC3BWBSD2GCZ7IUQQXZIORRBU"
                )
 
-      assert {:error, :invalid_seed} = Nkeys.Keypair.from_seed("")
+      assert {:error, :invalid_seed} = NKEYS.Keypair.from_seed("")
 
-      assert {:error, :invalid_seed} = Nkeys.Keypair.from_seed(" ")
+      assert {:error, :invalid_seed} = NKEYS.Keypair.from_seed(" ")
     end
 
     test "should validate prefix bytes" do
@@ -51,7 +50,7 @@ defmodule Nkeys.KeypairTest do
       ]
 
       Enum.each(seeds, fn seed ->
-        assert {:ok, _nkey} = Nkeys.Keypair.from_seed(seed)
+        assert {:ok, _nkey} = NKEYS.Keypair.from_seed(seed)
       end)
 
       invalid_seeds = [
@@ -60,7 +59,7 @@ defmodule Nkeys.KeypairTest do
       ]
 
       Enum.each(invalid_seeds, fn seed ->
-        assert {:error, :invalid_seed} = Nkeys.Keypair.from_seed(seed)
+        assert {:error, :invalid_seed} = NKEYS.Keypair.from_seed(seed)
       end)
 
       invalid_seeds = [
@@ -69,7 +68,7 @@ defmodule Nkeys.KeypairTest do
       ]
 
       Enum.each(invalid_seeds, fn seed ->
-        assert {:error, :invalid_seed} = Nkeys.Keypair.from_seed(seed)
+        assert {:error, :invalid_seed} = NKEYS.Keypair.from_seed(seed)
       end)
     end
   end
@@ -79,8 +78,8 @@ defmodule Nkeys.KeypairTest do
 
     test "from_seed" do
       nonce = "PXoWU7zWAMt75FY"
-      {:ok, nkeys} = Nkeys.Keypair.from_seed(@seed)
-      signed_nonce = Nkeys.Keypair.sign(nkeys, nonce)
+      {:ok, nkeys} = NKEYS.Keypair.from_seed(@seed)
+      signed_nonce = NKEYS.Keypair.sign(nkeys, nonce)
       encoded_signed_nonce = Base.encode64(signed_nonce)
 
       assert encoded_signed_nonce ==
@@ -89,8 +88,8 @@ defmodule Nkeys.KeypairTest do
 
     test "a second nonce" do
       nonce = "iBFByN3zQjAT7dQ"
-      {:ok, nkeys} = Nkeys.Keypair.from_seed(@seed)
-      signed_nonce = Nkeys.Keypair.sign(nkeys, nonce)
+      {:ok, nkeys} = NKEYS.Keypair.from_seed(@seed)
+      signed_nonce = NKEYS.Keypair.sign(nkeys, nonce)
       encoded_signed_nonce = Base.url_encode64(signed_nonce)
 
       assert encoded_signed_nonce ==
@@ -99,9 +98,9 @@ defmodule Nkeys.KeypairTest do
   end
 
   test "creating a public nkey" do
-    {:ok, nkeys} = Nkeys.Keypair.from_seed(@seed)
+    {:ok, nkeys} = NKEYS.Keypair.from_seed(@seed)
 
-    assert Nkeys.Keypair.public_key(nkeys) ==
+    assert NKEYS.Keypair.public_key(nkeys) ==
              "UCK5N7N66OBOINFXAYC2ACJQYFSOD4VYNU6APEJTAVFZB2SVHLKGEW7L"
   end
 end

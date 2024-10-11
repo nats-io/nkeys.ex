@@ -38,7 +38,7 @@ defmodule Nkeys.MixProject do
       source_url: @source_url,
       extras: [
         "README.md"
-      ],
+      ]
     ]
   end
 

@@ -1,6 +1,6 @@
-defmodule Nkeys.CRCTest do
+defmodule NKEYS.CRCTest do
   use ExUnit.Case, async: true
-  import Nkeys.CRC, only: [compute: 1]
+  import NKEYS.CRC, only: [compute: 1]
 
   test "computes the CRC of an empty string as 0x0000" do
     assert compute("") == 0x0000

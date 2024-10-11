@@ -1,4 +1,4 @@
-defmodule Nkeys.Keypair do
+defmodule NKEYS.Keypair do
   @moduledoc """
   Contains functions for creating, manipulating, and interacting with key pairs
   """
@@ -118,7 +118,7 @@ defmodule Nkeys.Keypair do
   """
   def public_key(%__MODULE__{public_key: public_key, prefix: prefix}) do
     with_prefix = <<prefix::size(5), 0::size(3), public_key::binary>>
-    crc = Nkeys.CRC.compute(with_prefix)
+    crc = NKEYS.CRC.compute(with_prefix)
     Base.encode32(<<with_prefix::binary, crc::size(16)-little>>, padding: false)
   end
 
@@ -178,7 +178,7 @@ defmodule Nkeys.Keypair do
   @doc false
   def encode(prefix, src) do
     raw = [prefix | src] |> :binary.list_to_bin()
-    crc = Nkeys.CRC.compute(raw)
+    crc = NKEYS.CRC.compute(raw)
     new = raw <> <<crc::little-16>>
     Base.encode32(new, padding: false)
   end
@@ -189,7 +189,7 @@ defmodule Nkeys.Keypair do
     b2 = (prefix &&& 31) <<< 3
 
     raw = [b1, b2 | src] |> :binary.list_to_bin()
-    crc = Nkeys.CRC.compute(raw)
+    crc = NKEYS.CRC.compute(raw)
     new = raw <> <<crc::little-16>>
     Base.encode32(new, padding: false)
   end
@@ -200,7 +200,7 @@ defmodule Nkeys.Keypair do
          n <- byte_size(raw) do
       <<prefix::binary-size(1), in_stripped::binary-size(n - 3), crc::little-16>> = raw
 
-      if Nkeys.CRC.compute(in_stripped) != crc do
+      if NKEYS.CRC.compute(in_stripped) != crc do
         {:error, :bad_crc}
       else
         {:ok, in_stripped, prefix}
