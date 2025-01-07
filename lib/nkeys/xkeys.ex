@@ -33,8 +33,8 @@ defmodule NKEYS.Xkeys do
     <<_version::binary-size(4), nonce::binary-size(@nonce_size), message::binary>> = input
 
     case Kcl.unbox(message, nonce, our_secret, their_public) do
+      {:error, _reason} -> :error
       {binary, _} -> {:ok, binary}
-      :error -> :error
     end
   end
 end
